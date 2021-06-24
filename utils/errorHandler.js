@@ -1,7 +1,7 @@
-import errorResponse from "./errorResponse";
+import ErrorResponse from "./errorResponse.js";
 
 const errorHandler = (err, req, res, next) => {
-  const { ...err } = err
+  const error = {...err}
 
   error.message = err.message
 

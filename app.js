@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import userRoute from "./components/users/userRoute.js"
-import { errorHandler } from "./utils/errorHandler.js"
+import errorHandler  from "./utils/errorHandler.js"
 
 dotenv.config()
 const app = express()
