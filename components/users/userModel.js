@@ -45,9 +45,9 @@ const test_user = new User({
 })
 // await test_user.save().then(()=> console.log('Successful...')).catch(err => console.log(`Oops: ${err}`))
 
-setTimeout(async function() {
-  await test_user.save().then(()=> console.log('Successful...')).catch(err => console.log(`Oops: ${err}`))
-}, 60000);
+// setTimeout(async function() {
+//   await test_user.save().then(()=> console.log('Successful...')).catch(err => console.log(`Oops: ${err}`))
+// }, 60000);
 
 
 export default User;
