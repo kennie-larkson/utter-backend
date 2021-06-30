@@ -35,6 +35,16 @@ const getUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
+  const {  email, password } = req.params;
+  const user = await User.find({ email, password });
+
+  res.status(200).json({
+    status: "success",
+    data: {user},
+  });
+});
+
 const updateUser = asyncHandler(async (req, res, next) => {
   const {
     params: { id },
@@ -53,4 +63,4 @@ const updateUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { createUser, getAllUsers, getUser, updateUser };
+export { createUser, getAllUsers, getUser, updateUser, getUserByEmailAndPassword };
