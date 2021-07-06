@@ -1,76 +1,50 @@
 import bcrypt from "bcrypt";
+import passportLocalMongoose from "passport-local-mongoose";
 import NewReg from "./userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
+import passport from "passport";
 
 const saltRounds = 10;
 
 //Register new user
 const createUser = asyncHandler(async (req, res, next) => {
-  const { password } = req.body;
+  const { email, password } = req.body;
 
-  const user = await NewReg.findOne({ email: req.body.email });
-  if (user) {
-    res
-      .status(200)
-      .json({ message: "A user already exists with that email. try another" });
-  } else {
-    if (password.length < 6) {
-      console.log('Password is too short')
-      res
-        .status(400)
-        .json({ message: "Password must be atleast 6 characters long" });
+  NewReg.register({ email: email }, password, function (err, newUser) {
+    if (err) {
+      console.log("error: " + err);
+      res.status(400).json({
+        status: "failed",
+        message: "Error registering user, please check details",
+      });
     } else {
-      bcrypt.hash(password, saltRounds, function (err, hash) {
-        const newUser = NewReg({
-          email: req.body.email,
-          password: hash,
-        });
-
-        newUser.save(function (err) {
-          if (err) {
-            console.log("there's an error");
-            res
-              .status(400)
-              .json({ success: false, message: "Enter a real email" });
-          } else {
-            res.status(201).json({
-              status: "success",
-              data: newUser,
-            });
-          }
-        });
+      passport.authenticate("local")(req, res, function () {
+        res.status(200).json({ status: "success", data: newUser });
       });
     }
-  }
+  });
 });
 
 //For login authentication
 const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
-  
   const { email, password } = req.body;
 
-  NewReg.findOne({email: email}, function(err, foundUser){
-    if (err) {
-      console.log(err);
-      res.status(400).json({status: "failed", message: "User does not exist"})
-    } else {
-      if (foundUser) {
-        bcrypt.compare(password, foundUser.password, function(err, result) {
-          if (result === true) {
-            res.status(200).json({
-              status: "success",
-              data: foundUser
-            })
-          }else {
-            res.status(400).json({status: "failed", message: "Passwords don't match"})
-          }
-        });
-      }
-    }
+  const newUser = new NewReg({
+    email: email,
+    password: password,
   });
 
+  req.login(newUser, function (err) {
+    if (err) {
+      console.log("My error: " + err);
+    } else {
+      passport.authenticate("local")(req,res,function(){
+        res.send("You have been authenticated and session is on")
+      });
+    
+    }
+  });
 });
-
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
   const { page = 1, limit = 10 } = req.query;
@@ -86,10 +60,9 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 const getUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  
+
   const user = await NewReg.findById(id);
 
   res.status(200).json({
@@ -101,25 +74,26 @@ const getUser = asyncHandler(async (req, res, next) => {
 const updateUser = asyncHandler(async (req, res, next) => {
   const {
     params: { id },
-    body: {email, password},
+    body: { email, password },
   } = req;
 
-   bcrypt.hash(password, saltRounds, function (err, hash) {
-    
-      NewReg.findByIdAndUpdate(id, {email: email, password: hash}, {
+  bcrypt.hash(password, saltRounds, function (err, hash) {
+    NewReg.findByIdAndUpdate(
+      id,
+      { email: email, password: hash },
+      {
         new: true,
         runValidators: true,
         useFindAndModify: false,
-      }, function (err, user) {
+      },
+      function (err, user) {
         res.status(200).json({
           status: "success",
-          data: user
-        })
-      });
-      
-  
-  })
- 
+          data: user,
+        });
+      }
+    );
+  });
 });
 
 export {
