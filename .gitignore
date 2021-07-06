@@ -1,4 +1,4 @@
 node_modules
 .env
 apis.http
-components/db
+db
