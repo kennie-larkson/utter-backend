@@ -6,6 +6,7 @@ import passport from "passport";
 import mongoose from "mongoose";
 
 import userRoute from "./components/users/userRoute.js";
+import responderRoute from "./components/respondents/respondersRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
 
@@ -23,6 +24,7 @@ app.use(
     secret: secret,
     resave: false,
     saveUninitialized: false,
+    maxAge: new Date(Date.now() + (30 * 86400 * 1000))
   })
 );
 
@@ -63,6 +65,7 @@ app.get("/secret", (req, res) => {
 })
 
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/responders", responderRoute)
 app.use(errorHandler);
 app.all("*", (req, res, next) => {
   res.status(404).json({

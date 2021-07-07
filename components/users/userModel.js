@@ -10,11 +10,20 @@ const basicRegSchema = new mongoose.Schema({
     match: /.+\@.+\..+/,
     lowercase: true,
   },
-
   password: {
     type: String,
     require: true,
   },
+  user_role: {
+    type: String,
+    enum: ["user","campaign responder", "campaigner creator"],
+    default: "user"
+  },
+
+  responder: {
+    type: mongoose.Schema.Types.ObjectId, ref: "Responder"
+  }
+
 });
 
 basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email"});

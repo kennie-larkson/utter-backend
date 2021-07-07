@@ -15,19 +15,19 @@ const responderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  phonenumber: { type: Number, required: true },
-  gender: { type: String, required: true },
+  phonenumber: { type: Number },
+  gender: { type: String},
   address: {
     type: String,
-    required: true,
+    
   },
   occupation: {
     type: String,
-    required: true,
+    
   },
   education: {
     type: String,
-    required: true,
+   
   },
   dob: {
     type: Date,
@@ -45,6 +45,9 @@ const responderSchema = new mongoose.Schema({
   skills: { type: String },
   socialmedia: { type: String },
   yearly_income: { type: String },
+  user: {
+    type: mongoose.Schema.Types.ObjectId, ref: "NewReg"
+  },
 });
 
 const Responder = mongoose.model("Responder", responderSchema);

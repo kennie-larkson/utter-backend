@@ -38,6 +38,7 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
     if (err) {
       console.log("My error: " + err);
     } else {
+      console.log(req.session)
       passport.authenticate("local")(req,res,function(){
         res.send("You have been authenticated and session is on")
       });
