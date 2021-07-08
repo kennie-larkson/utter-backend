@@ -1,53 +1,33 @@
 import mongoose from "mongoose";
+import passportLocalMongoose from "passport-local-mongoose"
+import passport from "passport"
 
-const userSchema = new mongoose.Schema({
-  name: {
-    fname: {
-      type: String,
-      required: true,
-    },
-    lname: {
-      type: String,
-      required: true,
-    },
-  },
+const basicRegSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true,
     unique: true,
+    required: true,
     match: /.+\@.+\..+/,
     lowercase: true,
   },
   password: {
     type: String,
-    required: true,
+    require: true,
   },
-  memberId: mongoose.ObjectId,
-  age: {
-    type: Number,
-    required: true
+  user_role: {
+    type: String,
+    enum: ["user","campaign responder", "campaigner creator"],
+    default: "user"
   },
- 
-  gender: { type: String, required: true },
+
+  responder: {
+    type: mongoose.Schema.Types.ObjectId, ref: "Responder"
+  }
+
 });
 
-const User = mongoose.model("User", userSchema);
-
-const test_user = new User({
-  name : {
-    fname: 'Kennie',
-    lname: 'Lawal'
-  },
-  email : 'abcd@gmail.com',
-  password: 'somefreakypassword1234',
-  age: 20,
-  gender: 'Male'
-})
-// await test_user.save().then(()=> console.log('Successful...')).catch(err => console.log(`Oops: ${err}`))
-
-// setTimeout(async function() {
-//   await test_user.save().then(()=> console.log('Successful...')).catch(err => console.log(`Oops: ${err}`))
-// }, 60000);
+basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email"});
+const NewReg = mongoose.model("NewReg", basicRegSchema);
 
 
-export default User;
+export default NewReg;
