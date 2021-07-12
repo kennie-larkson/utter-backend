@@ -10,3 +10,4 @@ class errorResponse extends Error {
 }
 
 export default errorResponse
+
