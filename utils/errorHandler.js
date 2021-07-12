@@ -19,13 +19,6 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 400);
   }
 
-  // Mongoose A required filed is missing in the document
-  // if(err.type === "entity.parse.failed") {
-  //   const message = "Check that you have entered the necessary fields"
-  //   error = new ErrorResponse(message, 400)
-    
-  // }
-
   // Mongoose validation error
   if (err.name === "ValidationError") {
     const message = Object.values(err.errors).map((val) => val.message);
