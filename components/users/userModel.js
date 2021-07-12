@@ -19,6 +19,10 @@ const basicRegSchema = new mongoose.Schema({
     enum: ["user","campaign responder", "campaigner creator"],
     default: "user"
   },
+  createOn: {
+    type: Date,
+    default: Date.now()
+  },
 
   responder: {
     type: mongoose.Schema.Types.ObjectId, ref: "Responder"
