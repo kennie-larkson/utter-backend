@@ -49,6 +49,21 @@ db_con.once("open", function () {
   console.log(`Connection established to ${uri}`);
 });
 
+db_con.on("error", function (err) {
+  console.log(`Mongoose connection error: ${err}`);
+})
+
+db_con.on('disconnected', function () {
+  console.log('Mongoose disconnected');
+});
+
+process.on('SIGINT', function () {
+  db_con.close(function () {
+      console.log('Mongoose disconnected through app termination');
+  });
+  process.exit(0);
+});
+
 app.get("/", (req, res) => {
   res.send("Hey! the UtterUsers server is live...");
 });
