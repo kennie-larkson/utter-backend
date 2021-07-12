@@ -19,7 +19,7 @@ const createUser = asyncHandler(async (req, res, next) => {
       });
     } else {
       passport.authenticate("local")(req, res, function () {
-        res.status(200).json({ status: "success", data: newUser });
+        res.status(200).json({ status: "success" });
       });
     }
   });
