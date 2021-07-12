@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const surveySchema = new mongoose.Schema({
   title: { type: String, required: true },
-  question: { type: String, required: true },
+  questions: { type: Array, required: true },
   created: {
     type: Date,
     default: Date.now,
