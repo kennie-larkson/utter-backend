@@ -14,7 +14,7 @@ import NewReg from "./components/users/userModel.js";
 
 dotenv.config();
 const app = express();
-const uri = process.env.USER_DB_URI;
+// const uri = process.env.USER_DB_URI;
 const secret = process.env.SESSION_SECRET;
 
 app.use(cors());
@@ -37,32 +37,7 @@ passport.use(NewReg.createStrategy());
 passport.serializeUser(NewReg.serializeUser());
 passport.deserializeUser(NewReg.deserializeUser());
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
 
-const db_con = mongoose.connection;
-
-db_con.once("open", function () {
-  console.log(`Connection established to ${uri}`);
-});
-
-db_con.on("error", function (err) {
-  console.log(`Mongoose connection error: ${err}`);
-})
-
-db_con.on('disconnected', function () {
-  console.log('Mongoose disconnected');
-});
-
-process.on('SIGINT', function () {
-  db_con.close(function () {
-      console.log('Mongoose disconnected through app termination');
-  });
-  process.exit(0);
-});
 
 app.get("/", (req, res) => {
   res.send("Hey! the UtterUsers server is live...");
