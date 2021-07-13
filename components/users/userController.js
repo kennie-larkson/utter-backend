@@ -16,7 +16,6 @@ const createUser = asyncHandler(async (req, res, next) => {
       res.status(400).json({
         status: "failed",
         message: err.message
-        // message: "Error registering user, please check details",
       });
     } else {
       passport.authenticate("local")(req, res, function () {
