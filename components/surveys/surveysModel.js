@@ -5,6 +5,10 @@ const surveySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     questions: { type: Array, required: true },
+    campaigner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Campaigner",
+    },
   },
   { timestamps: true }
 );
