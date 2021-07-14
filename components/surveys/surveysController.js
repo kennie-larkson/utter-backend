@@ -1,11 +1,10 @@
 import Survey from "./surveysModel.js";
-import NewReg from "../users/userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 
 const createSurvey = asyncHandler(async (req, res, next) => {
   const survey = new Survey(req.body);
 
-  if (req.isAuthenticated()) {
+  if (!req.isAuthenticated()) {
     survey.save(function (err, newsurvey) {
       if (err) {
         console.log("Survey not created: " + err);

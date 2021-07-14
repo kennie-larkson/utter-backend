@@ -15,7 +15,7 @@ const createUser = asyncHandler(async (req, res, next) => {
       console.log("error: " + err);
       res.status(400).json({
         status: "failed",
-        message: "Error registering user, please check details",
+        message: err.message,
       });
     } else {
       passport.authenticate("local")(req, res, function () {
@@ -29,6 +29,7 @@ const createUser = asyncHandler(async (req, res, next) => {
 const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
+  // sets the storage.
   const newUser = new NewReg({
     email: email,
     password: password,
@@ -37,38 +38,54 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
   req.login(newUser, function (err) {
     if (err) {
       console.log("My error: " + err);
-    } else {
-      console.log(req.session)
-      passport.authenticate("local")(req,res,function(){
-        res.send("You have been authenticated and session is on")
+      res.status(400).json({
+        status: "failed",
+        message: err.message,
       });
-    
+    } else {
+      console.log(req.session);
+      passport.authenticate("local")(req, res, function () {
+        res
+          .status(200)
+          .cookie("utter", req.user._id, { maxAge: 900000, httpOnly: true })
+          .json({ status: "success", message: "logged successfully!" });
+      });
     }
   });
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-  const { page = 1, limit = 10 } = req.query;
-
-  const users = await NewReg.find({})
-    .skip(limit * page - limit)
-    .limit(limit * 1);
-
-  res.status(200).json({
-    status: "success",
-    per_page: limit,
-    data: { users },
+  await NewReg.find({}, function (err, users) {
+    if (err) {
+      res.status(400).json({
+        status: "failed",
+        message: err.message,
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        data: users,
+      });
+    }
   });
 });
 
 const getUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await NewReg.findById(id);
-
-  res.status(200).json({
-    status: "success",
-    data: { user },
+  await NewReg.findById(id, function (err, user) {
+    if (err) {
+      console.log(`Error: ${err.message}`);
+      res.status(400).json({
+        status: "failed",
+        message: err,
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        data: { user },
+      });
+    }
   });
 });
 
