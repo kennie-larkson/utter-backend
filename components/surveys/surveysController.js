@@ -6,6 +6,8 @@ const createSurvey = asyncHandler( async (req, res, next) => {
     const survey = new Survey(req.body)
 
     if(req.isAuthenticated()) {
+        console.log(req.session);
+        survey.createdBy = await NewReg.findOne({email: req.session.passport.user})
         survey.save(function (err, newsurvey) {
             if(err) {
                 console.log("Survey not created: "+err);
@@ -13,7 +15,8 @@ const createSurvey = asyncHandler( async (req, res, next) => {
             }else {
                 res.status(200).json({
                     status: "success",
-                    message: "Your survey has been created"
+                    message: "Your survey has been created",
+                    data: newsurvey
                 })
             }
         })
@@ -23,4 +26,4 @@ const createSurvey = asyncHandler( async (req, res, next) => {
     }
 })
 
- export {createSurvey}
+ export default createSurvey
