@@ -17,10 +17,11 @@ dotenv.config();
 const app = express();
 // const uri = process.env.USER_DB_URI;
 const secret = process.env.SESSION_SECRET;
+const url = process.env.CORS_ORIGIN
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: url,
     credentials: true,
   })
 );
@@ -29,7 +30,7 @@ app.use(express.json());
 // app.use(cookieParser());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", url);
   res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
