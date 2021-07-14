@@ -3,6 +3,7 @@ import passportLocalMongoose from "passport-local-mongoose";
 import NewReg from "./userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 import passport from "passport";
+import { createToken } from "./../../utils/JWT_HANDLER.js";
 
 const saltRounds = 10;
 
@@ -15,7 +16,7 @@ const createUser = asyncHandler(async (req, res, next) => {
       console.log("error: " + err);
       res.status(400).json({
         status: "failed",
-        message: err.message
+        message: err.message,
       });
     } else {
       passport.authenticate("local")(req, res, function () {
@@ -26,37 +27,42 @@ const createUser = asyncHandler(async (req, res, next) => {
 });
 
 //For login authentication
-const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
+const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  // sets the storage.
   const newUser = new NewReg({
     email: email,
     password: password,
   });
 
-  req.login(newUser, function (err) {
+  req.login(newUser, async (err) => {
     if (err) {
       console.log("My error: " + err);
       res.status(400).json({
         status: "failed",
-        message: err.message
+        message: err.message,
       });
     } else {
-      console.log(req.session);
-      passport.authenticate("local")(req, res, function () {
-        res.send("You have been authenticated and session is on");
+      // use jwt here!
+      const userid = await createToken(newUser._id);
+      console.log(userid);
+      //
+      res.status(200).json({
+        status: "success",
+        message: "logged successfully!",
+        hash: userid,
       });
     }
   });
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-
   await NewReg.find({}, function (err, users) {
     if (err) {
       res.status(400).json({
         status: "failed",
-        message: err.message
+        message: err.message,
       });
     } else {
       res.status(200).json({
@@ -65,7 +71,6 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  
 });
 
 const getUser = asyncHandler(async (req, res, next) => {
@@ -73,20 +78,18 @@ const getUser = asyncHandler(async (req, res, next) => {
 
   await NewReg.findById(id, function (err, user) {
     if (err) {
-      console.log(`Error: ${err.message}`)
+      console.log(`Error: ${err.message}`);
       res.status(400).json({
         status: "failed",
-        message: err
-      })
-    }else {
+        message: err,
+      });
+    } else {
       res.status(200).json({
         status: "success",
         data: { user },
       });
     }
   });
-
-  
 });
 
 const updateUser = asyncHandler(async (req, res, next) => {
