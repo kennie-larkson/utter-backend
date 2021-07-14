@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 dotenv.config()
 const uri = process.env.USER_DB_URI;
 
-const basicRegSchema = new mongoose.Schema({
+const basicRegSchema = mongoose.Schema({
+ 
   email: {
     type: String,
     unique: true,
@@ -26,7 +27,7 @@ const basicRegSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  
+  campaigns: {type: mongoose.Schema.Types.ObjectId, ref: "Campaign"},
   responder: {
     type: mongoose.Schema.Types.ObjectId, ref: "Responder"
   }
@@ -63,7 +64,8 @@ process.on('SIGINT', function () {
   process.exit(0);
 });
 
-basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email"});
+basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email" });
+// basicRegSchema.plugin(passportLocalMongoose, {usernameField: "_id", usernameQueryFields: ["_id"]});
 const NewReg = mongoose.model("NewReg", basicRegSchema);
 
 
