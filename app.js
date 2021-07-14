@@ -11,20 +11,25 @@ import campaignerRoute from "./components/campaigners/campaignersRoute.js";
 import surveyRoute from "./components/surveys/surveysRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
-import cookieParser from "cookie-parser";
+// import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 // const uri = process.env.USER_DB_URI;
 const secret = process.env.SESSION_SECRET;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
@@ -36,6 +41,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     maxAge: new Date(Date.now() + 30 * 86400 * 1000),
+    sameSite: false,
   })
 );
 
