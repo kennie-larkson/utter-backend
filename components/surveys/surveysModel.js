@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import URLSlugs from "mongoose-url-slugs";
 
-const surveySchema = new mongoose.Schema(
+const surveySchema = mongoose.Schema(
   {
     title: { type: String, required: true },
-    questions: { type: Array, required: true },
-    campaigner: {
+    questions: [{ type: String, required: true }],
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Campaigner",
+      ref: "NewReg",
     },
   },
   { timestamps: true }

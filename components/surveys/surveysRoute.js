@@ -1,5 +1,5 @@
 import express from "express"
-import { createSurvey } from "./surveysController.js"
+import createSurvey  from "./surveysController.js"
 
 const router = express.Router()
 

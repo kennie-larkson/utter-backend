@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema({
-  campaigns: {
-    type: Array,
-  },
+  campaigns: [{
+    type: {},
+  }],
 });
 
 
