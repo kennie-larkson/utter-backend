@@ -49,4 +49,25 @@ const createSurvey = asyncHandler(async (req, res) => {
   // }
 });
 
+export const mySurveys = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  const tokenResult = verifyToken(token);
+  if (tokenResult.err) {
+    res.status(400).json({ status: "failed", message: tokenResult.err });
+    return;
+  }
+
+  await Survey.find({ createdBy: token }, (err, surveys) => {
+    err
+      ? res
+          .status(400)
+          .json({ status: "failed", message: "Error : " + err.message })
+      : res.status(200).json({
+          status: "success",
+          message: "Surveys Pulled",
+          surveys,
+        });
+  });
+});
+
 export default createSurvey;
