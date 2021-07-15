@@ -93,7 +93,9 @@ basicRegSchema.methods.comparePassword = function(res, candidatePassword, cb) {
      
       if(err) return console.log(`Compare error : ${err}`);
       if(isMatch === false) { console.log(`Password mismatch`)
+      // console.log(this.password);
         res.status(400).json({status: "failed", message: "Wrong password"})
+        
         return
     };
       cb(null, isMatch);
