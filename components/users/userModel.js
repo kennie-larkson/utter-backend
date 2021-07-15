@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
-import passportLocalMongoose from "passport-local-mongoose"
-import passport from "passport"
+import bcrypt from "bcrypt"
 import dotenv from "dotenv";
+
 dotenv.config()
+
 const uri = process.env.USER_DB_URI;
+const SALT_WORK_FACTOR = 10
 
 const basicRegSchema = mongoose.Schema({
  
@@ -16,7 +18,7 @@ const basicRegSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    require: true,
+    required: true,
   },
   user_role: {
     type: String,
@@ -64,8 +66,40 @@ process.on('SIGINT', function () {
   process.exit(0);
 });
 
-basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email" });
-// basicRegSchema.plugin(passportLocalMongoose, {usernameField: "_id", usernameQueryFields: ["_id"]});
+
+basicRegSchema.pre('save', function(next) {
+  var user = this;
+
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified('password')) return next();
+
+  // generate a salt
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+      if (err) return next(err);
+
+      // hash the password using our new salt
+      bcrypt.hash(user.password, salt, function(err, hash) {
+          if (err) return next(err);
+          // override the cleartext password with the hashed one
+          user.password = hash;
+          next();
+      });
+  });
+});
+
+    
+basicRegSchema.methods.comparePassword = function(res, candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+     
+      if(err) return console.log(`Compare error : ${err}`);
+      if(isMatch === false) { console.log(`Password mismatch`)
+        res.status(400).json({status: "failed", message: "Wrong password"})
+        return
+    };
+      cb(null, isMatch);
+  });
+};
+   
 const NewReg = mongoose.model("NewReg", basicRegSchema);
 
 

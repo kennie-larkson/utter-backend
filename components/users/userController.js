@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
-import passportLocalMongoose from "passport-local-mongoose";
 import NewReg from "./userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
-import passport from "passport";
+
+import setCookies from "./../../utils/setCookies.js";
+import getCookies from "./../../utils/getCookies.js";
 
 const saltRounds = 10;
 
@@ -10,53 +11,63 @@ const saltRounds = 10;
 const createUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  NewReg.register({ email: email }, password, function (err, newUser) {
+  const user = new NewReg({ email, password });
+  // save the user to database
+  user.save(function (err, user) {
     if (err) {
-      console.log("error: " + err);
-      res.status(400).json({
-        status: "failed",
-        message: err.message
-      });
-    } else {
-      passport.authenticate("local")(req, res, function () {
-        res.status(200).json({ status: "success" });
-      });
+      res.status(400).json({status: "failed", message: err.message})
+    }else {
+      setCookies(res, user._id)
+      res.status(200).json({
+        status: "success",
+        message: "Your session is active and cookie has been set"
+      })
     }
+
   });
+
+ 
 });
 
 //For login authentication
 const getUserByEmailAndPassword = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  const newUser = new NewReg({
-    email: email,
-    password: password,
-  });
-
-  req.login(newUser, function (err) {
+   // fetch the user and test password verification
+NewReg.findOne({ email: email }, function(err, user) {
+  if (err) {
+    res.status(400).json({status: "failed", message: err.message})
+    return 
+  }else {
+    // test a matching password
+  user.comparePassword(res, password, function(err, isMatch) {
     if (err) {
-      console.log("My error: " + err);
-      res.status(400).json({
-        status: "failed",
-        message: err.message
-      });
-    } else {
-      console.log(req.session);
-      passport.authenticate("local")(req, res, function () {
-        res.send("You have been authenticated and session is on");
-      });
+      console.log(`Error comparing pword: ${err.message}`);
+      res.status(400).json({message: 'Error comparing password'})
+      return 
+    }else {
+      if( getCookies(req, "_id") === undefined ) {
+        setCookies(res, user._id)
+        res.status(200).json({status: "success", message: "User authenticated and a new session has been set"})
+      }else {
+        res.status(200).json({status: "success", message: "User authenticated and has a running session"})
+      }
     }
-  });
+    console.log(password, isMatch); // -&gt; Password123: true
+
+   
+});
+  }
+   
+});
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-
   await NewReg.find({}, function (err, users) {
     if (err) {
       res.status(400).json({
         status: "failed",
-        message: err.message
+        message: err.message,
       });
     } else {
       res.status(200).json({
@@ -65,7 +76,6 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
       });
     }
   });
-  
 });
 
 const getUser = asyncHandler(async (req, res, next) => {
@@ -73,20 +83,18 @@ const getUser = asyncHandler(async (req, res, next) => {
 
   await NewReg.findById(id, function (err, user) {
     if (err) {
-      console.log(`Error: ${err.message}`)
+      console.log(`Error: ${err.message}`);
       res.status(400).json({
         status: "failed",
-        message: err
-      })
-    }else {
+        message: err,
+      });
+    } else {
       res.status(200).json({
         status: "success",
         data: { user },
       });
     }
   });
-
-  
 });
 
 const updateUser = asyncHandler(async (req, res, next) => {

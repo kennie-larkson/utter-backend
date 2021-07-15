@@ -5,7 +5,7 @@ import asyncHandler from "./../../middleware/asyncHandler.js";
 const createSurvey = asyncHandler( async (req, res, next) => {
     const survey = new Survey(req.body)
 
-    if(req.isAuthenticated()) {
+    if(req.isAuthenticated) {
         console.log(req.session);
         survey.createdBy = await NewReg.findOne({email: req.session.passport.user})
         survey.save(function (err, newsurvey) {
