@@ -6,19 +6,11 @@ dotenv.config()
 // const uri = process.env.USER_DB_URI;
 
 const basicRegSchema = mongoose.Schema({
- 
-  // email: {
-  //   type: String,
-  //   unique: true,
-  //   required: true,
-  //   match: /.+\@.+\..+/,
-  //   lowercase: true,
-  // },
 
   email: {
     type: String,
     unique: true,
-    // required: true,
+    required: true,
     match: /.+\@.+\..+/,
     lowercase: true,
   },
