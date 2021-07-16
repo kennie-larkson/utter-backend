@@ -22,7 +22,7 @@ const createUser = asyncHandler(async (req, res, next) => {
       } else {
         passport.authenticate("local")(req, res, function () {
           console.log("user has been authenticated and cookie is set");
-          res.status(200).json({status: success, message: 'User successfully registered'})
+          res.status(200).json({status: 'success', message: 'User successfully registered'})
           // res.redirect("/secret");
         });
 
