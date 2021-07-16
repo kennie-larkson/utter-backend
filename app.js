@@ -11,13 +11,12 @@ import campaignerRoute from "./components/campaigners/campaignersRoute.js";
 import surveyRoute from "./components/surveys/surveysRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
-// import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
-// const uri = process.env.USER_DB_URI;
 const secret = process.env.SESSION_SECRET;
 const url = process.env.CORS_ORIGIN
+const uri = process.env.USER_DB_URI;
 
 app.use(
   cors({
@@ -27,7 +26,6 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-// app.use(cookieParser());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", url);
@@ -41,7 +39,8 @@ app.use(
     secret: secret,
     resave: false,
     saveUninitialized: false,
-    maxAge: new Date(Date.now() + 30 * 86400 * 1000),
+    // maxAge: new Date(Date.now() + 30 * 86400 * 1000),
+    maxAge: 1800,
     sameSite: false,
   })
 );
@@ -49,9 +48,33 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(NewReg.createStrategy());
-passport.serializeUser(NewReg.serializeUser());
-passport.deserializeUser(NewReg.deserializeUser());
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+});
+
+const db_con = mongoose.connection;
+
+db_con.once("open", function () {
+  console.log(`Connection established to ${uri}`);
+});
+
+db_con.on("error", function (err) {
+  console.log(`Mongoose connection error: ${err}`);
+})
+
+db_con.on('disconnected', function () {
+  console.log('Mongoose disconnected');
+});
+
+process.on('SIGINT', function () {
+  db_con.close(function () {
+      console.log('Mongoose disconnected through app termination');
+  });
+  process.exit(0);
+});
+
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
@@ -67,13 +90,13 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-app.get("/secret", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send("Here is the secret");
-  } else {
-    res.redirect("/");
-  }
-});
+// app.get("/secret", (req, res) => {
+//   if (req.isAuthenticated()) {
+//     res.send("Here is the secret");
+//   } else {
+//     res.redirect("/");
+//   }
+// });
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/responders", responderRoute);

@@ -9,21 +9,26 @@ const saltRounds = 10;
 
 //Register new user
 const createUser = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
 
-  NewReg.register({ email: email }, password, function (err, newUser) {
-    if (err) {
-      console.log("error: " + err);
-      res.status(400).json({
-        status: "failed",
-        message: err.message,
-      });
-    } else {
-      passport.authenticate("local")(req, res, function () {
-        res.status(200).json({ status: "success" });
-      });
+  NewReg.register(
+    new NewReg({ email: req.body.email }),
+    req.body.password,
+    function (err, user) {
+      if (err) {
+        console.log(`oops : ${err.message}`);
+        res.status(400).json({message: err.message})
+        // res.redirect("/");
+      } else {
+        passport.authenticate("local")(req, res, function () {
+          console.log("user has been authenticated and cookie is set");
+          res.status(200).json({status: success, message: 'User successfully registered'})
+          // res.redirect("/secret");
+        });
+
+      }
     }
-  });
+  );
 });
 
 //For login authentication
@@ -36,22 +41,18 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
     password: password,
   });
 
-  req.login(newUser, async (err) => {
+  req.login(newUser, function (err) {
     if (err) {
-      console.log("My error: " + err);
-      res.status(400).json({
-        status: "failed",
-        message: err.message,
-      });
+      console.log(`login error: ${err.message}`);
+      res.status(400).json({ message: `login error : ${err.message}` });
     } else {
-      // use jwt here!
-      const userid = await createToken(newUser._id);
-      console.log(userid);
-      //
-      res.status(200).json({
-        status: "success",
-        message: "logged successfully!",
-        hash: userid,
+      passport.authenticate("local")(req, res, function () {
+        // use jwt here!
+        const userid = createToken(newUser._id);
+        console.log(userid);
+        console.log("user logged in and authenticated");
+        res.status(200).json({ message: "user logged in and authenticated" });
+        
       });
     }
   });
