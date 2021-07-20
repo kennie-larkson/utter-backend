@@ -28,10 +28,10 @@ const createSurvey = asyncHandler(async (req, res) => {
   }
 
   // if (req.isAuthenticated()) {
-  //   survey.createdBy = await NewReg.findOne({
+  //   Survey.createdBy = await NewReg.findOne({
   //     email: req.session.passport.user,
   //   });
-  //   survey.save(function (err, newsurvey) {
+  //   Survey.save(function (err, newsurvey) {
   //     if (err) {
   //       console.log("Survey not created: " + err);
   //       res.send("Survey not created: " + err);

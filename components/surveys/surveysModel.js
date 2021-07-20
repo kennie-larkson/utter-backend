@@ -9,6 +9,7 @@ const surveySchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "NewReg",
     },
+    status: {type: String, enum: ['active', 'inactive'], default: 'inactive'}
   },
   { timestamps: true }
 );
