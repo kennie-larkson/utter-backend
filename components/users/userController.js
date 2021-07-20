@@ -14,7 +14,7 @@ const createUser = asyncHandler(async (req, res, next) => {
   NewReg.register(
     new NewReg({ email: req.body.email }),
     req.body.password,
-    function (err, user) {
+    function (err, newUser) {
       if (err) {
         console.log(`oops : ${err.message}`);
         res.status(400).json({message: err.message})
@@ -22,6 +22,9 @@ const createUser = asyncHandler(async (req, res, next) => {
       } else {
         passport.authenticate("local")(req, res, function () {
           console.log("user has been authenticated and cookie is set");
+          //creating with jwt token upon registration also
+          const userid = createToken(newUser._id);
+          console.log(`user created, authenticated and session token set: ${userid}`);
           res.status(200).json({status: 'success', message: 'User successfully registered'})
           // res.redirect("/secret");
         });
