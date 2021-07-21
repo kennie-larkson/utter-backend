@@ -4,11 +4,9 @@ import URLSlugs from "mongoose-url-slugs";
 const surveySchema = mongoose.Schema(
   {
     title: { type: String, required: true },
-    questions: [{ type: Array, required: true }],
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "NewReg",
-    },
+    questions: { type: Array, required: true },
+    createdBy: String,
+    category: String
   },
   { timestamps: true }
 );

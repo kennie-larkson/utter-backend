@@ -4,14 +4,14 @@ import { verifyToken } from "../../utils/JWT_HANDLER.js";
 import NewReg from "./../users/userModel.js";
 
 const createSurvey = asyncHandler(async (req, res) => {
-  const { id, title, questions } = req.body;
+  const { id, title, questions, category } = req.body;
   // verifytoken first.
   const tokenResult = verifyToken(id);
 
   if (tokenResult.err) {
     res.status(400).json({ status: "failed", message: tokenResult.err });
   } else {
-    const survey = new Survey({ title, questions, createdBy: tokenResult });
+    const survey = new Survey({ title, questions, createdBy: tokenResult, category });
 
     survey.save(function (err, newsurvey) {
       if (err) {
@@ -57,7 +57,7 @@ export const mySurveys = asyncHandler(async (req, res) => {
     return;
   }
 
-  await Survey.find({ createdBy: token }, (err, surveys) => {
+  await Survey.find({ createdBy: tokenResult }, (err, surveys) => {
     err
       ? res
           .status(400)
@@ -69,5 +69,16 @@ export const mySurveys = asyncHandler(async (req, res) => {
         });
   });
 });
+
+export const singleSurvey = asyncHandler(async(req, res)=>{
+  const { slug } = req.body;
+  const survey = await Survey.findOne({slug: slug}, (err, survey)=>{
+    if(err){
+      res.status(400).json({status: "failed", message : err.message});
+    } else{
+      res.status(201).json({status : "success", message : "survey fetched successfully", survey});
+    }
+  })
+})
 
 export default createSurvey;
