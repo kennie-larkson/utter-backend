@@ -3,10 +3,10 @@ import passportLocalMongoose from "passport-local-mongoose"
 import passport from "passport"
 import dotenv from "dotenv";
 dotenv.config()
-const uri = process.env.USER_DB_URI;
+// const uri = process.env.USER_DB_URI;
 
 const basicRegSchema = mongoose.Schema({
- 
+
   email: {
     type: String,
     unique: true,
@@ -16,7 +16,7 @@ const basicRegSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    require: true,
+    // required: true,
   },
   user_role: {
     type: String,
@@ -37,36 +37,23 @@ const basicRegSchema = mongoose.Schema({
 );
 
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
-
-const db_con = mongoose.connection;
-
-db_con.once("open", function () {
-  console.log(`Connection established to ${uri}`);
-});
-
-db_con.on("error", function (err) {
-  console.log(`Mongoose connection error: ${err}`);
-})
-
-db_con.on('disconnected', function () {
-  console.log('Mongoose disconnected');
-});
-
-process.on('SIGINT', function () {
-  db_con.close(function () {
-      console.log('Mongoose disconnected through app termination');
-  });
-  process.exit(0);
-});
 
 basicRegSchema.plugin(passportLocalMongoose, {usernameField: "email" });
+// basicRegSchema.plugin(passportLocalMongoose );
+
+
+
 // basicRegSchema.plugin(passportLocalMongoose, {usernameField: "_id", usernameQueryFields: ["_id"]});
 const NewReg = mongoose.model("NewReg", basicRegSchema);
+passport.use(NewReg.createStrategy());
+passport.serializeUser( function(user, done) {
+  done(null, user.id)
+});
+passport.deserializeUser(function(id, done) {
+  NewReg.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 
 export default NewReg;
