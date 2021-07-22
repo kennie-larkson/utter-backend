@@ -5,17 +5,19 @@ import session, { Cookie } from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
 
+// import connect from "./utils/database.js";
 import userRoute from "./components/users/userRoute.js";
 import responderRoute from "./components/respondents/respondersRoute.js";
 import campaignerRoute from "./components/campaigners/campaignersRoute.js";
 import surveyRoute from "./components/surveys/surveysRoute.js";
+import surveyResponseRoute from "./components/surveys/surveyResRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
 
 dotenv.config();
 const app = express();
 const secret = process.env.SESSION_SECRET;
-const url = process.env.CORS_ORIGIN
+const url = process.env.CORS_ORIGIN;
 const uri = process.env.USER_DB_URI;
 
 app.use(
@@ -48,6 +50,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+//connect to database
+// connect();
+
 mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -75,7 +80,6 @@ process.on('SIGINT', function () {
   process.exit(0);
 });
 
-
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
@@ -102,6 +106,7 @@ app.use("/api/v1/users", userRoute);
 app.use("/api/v1/responders", responderRoute);
 app.use("/api/v1/campaigners", campaignerRoute);
 app.use("/api/v1/surveys", surveyRoute);
+app.use("/api/v1/surveyresponse", surveyResponseRoute);
 app.use(errorHandler);
 app.all("*", (req, res, next) => {
   res.status(404).json({

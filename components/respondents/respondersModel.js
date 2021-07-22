@@ -48,9 +48,9 @@ const responderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId, ref: "NewReg"
   },
-  surveys: {
+  surveys: [{
     type: mongoose.Schema.Types.ObjectId, ref: "Survey"
-  }
+  }]
 });
 
 const Responder = mongoose.model("Responder", responderSchema);

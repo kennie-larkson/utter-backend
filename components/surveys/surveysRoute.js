@@ -1,8 +1,8 @@
 import express from "express"
 import createSurvey  from "./surveysController.js"
 
-const router = express.Router()
+const surveyRoute = express.Router()
 
-router.route("/createsurvey").post(createSurvey)
+surveyRoute.route("/createsurvey").post(createSurvey)
 
-export default router 
+export default surveyRoute 
