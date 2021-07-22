@@ -1,12 +1,10 @@
-import express from "express"
+import express from "express";
 
-import { createResponder, getAllResponders } from "./respondersController.js"
+import { responderSignup, getAllResponders } from "./respondersController.js";
 
+const responderRoute = express.Router();
 
-const router = express.Router()
+responderRoute.route("/register").post(responderSignup);
+responderRoute.route("/responder").get(getAllResponders);
 
-router.route("/register").post(createResponder)
-router.route("/responder").get(getAllResponders)
-
-
-export default router
+export default responderRoute;

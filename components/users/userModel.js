@@ -27,9 +27,12 @@ const basicRegSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
-  campaigns: {type: mongoose.Schema.Types.ObjectId, ref: "Campaign"},
+  campaigns: {type: mongoose.Schema.Types.ObjectId, ref: "Campaign"}, //user campaigns should user be a campaigner
   responder: {
     type: mongoose.Schema.Types.ObjectId, ref: "Responder"
+  },
+  responses: {
+    type: mongoose.Schema.Types.ObjectId, ref: "surveyResponse" //user responses should user be a responder
   }
 
 },

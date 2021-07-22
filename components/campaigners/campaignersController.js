@@ -3,14 +3,14 @@ import NewReg from "../users/userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 
 const createCampaigner = asyncHandler(async (req, res, next) => {
-//   const {
-//     businessname,
-//     businesswebsite,
-//     businessaddress,
-//     industry,
-//     employeesize,
-//     targetaudience,
-//   } = req.body;
+  //   const {
+  //     businessname,
+  //     businesswebsite,
+  //     businessaddress,
+  //     industry,
+  //     employeesize,
+  //     targetaudience,
+  //   } = req.body;
   const campaigner = new Campaigner(req.body);
 
   if (req.isAuthenticated()) {
