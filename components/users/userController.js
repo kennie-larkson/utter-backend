@@ -3,7 +3,7 @@ import passportLocalMongoose from "passport-local-mongoose";
 import NewReg from "./userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 import passport from "passport";
-import { createToken } from "./../../utils/JWT_HANDLER.js";
+import { createToken, verifyToken } from "./../../utils/JWT_HANDLER.js";
 
 const saltRounds = 10;
 
@@ -17,18 +17,17 @@ const createUser = asyncHandler(async (req, res, next) => {
     function (err, newUser) {
       if (err) {
         console.log(`oops : ${err.message}`);
-        res.status(400).json({message: err.message})
-        // res.redirect("/");
+        res.status(400).json({ message: err.message });
       } else {
         passport.authenticate("local")(req, res, function () {
-          console.log("user has been authenticated and cookie is set");
-          //creating with jwt token upon registration also
-          const userid = createToken(newUser._id);
-          console.log(`user created, authenticated and session token set: ${userid}`);
-          res.status(200).json({status: 'success', message: 'User successfully registered'})
-          // res.redirect("/secret");
-        });
+          console.log("user has been created and stored", newUser._id);
 
+          res.status(200).json({
+            status: "success",
+            message: "User successfully registered",
+            data: newUser._id
+          });
+        });
       }
     }
   );
@@ -43,7 +42,7 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
     email: email,
     password: password,
   });
-
+  
   req.login(newUser, function (err) {
     if (err) {
       console.log(`login error: ${err.message}`);
@@ -55,7 +54,6 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
         console.log(userid);
         console.log("user logged in and authenticated");
         res.status(200).json({ message: "user logged in and authenticated" });
-        
       });
     }
   });
