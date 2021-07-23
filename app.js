@@ -5,7 +5,7 @@ import session, { Cookie } from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
 
-// import connect from "./utils/database.js";
+import connect from "./utils/database.js";
 import userRoute from "./components/users/userRoute.js";
 import responderRoute from "./components/respondents/respondersRoute.js";
 import campaignerRoute from "./components/campaigners/campaignersRoute.js";
@@ -15,6 +15,7 @@ import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
 
 dotenv.config();
+connect();
 const app = express();
 const secret = process.env.SESSION_SECRET;
 const url = process.env.CORS_ORIGIN;
@@ -53,32 +54,32 @@ app.use(passport.session());
 //connect to database
 // connect();
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
+// mongoose.connect(uri, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   useCreateIndex: true,
+// });
 
-const db_con = mongoose.connection;
+// const db_con = mongoose.connection;
 
-db_con.once("open", function () {
-  console.log(`Connection established to ${uri}`);
-});
+// db_con.once("open", function () {
+//   console.log(`Connection established to ${uri}`);
+// });
 
-db_con.on("error", function (err) {
-  console.log(`Mongoose connection error: ${err}`);
-})
+// db_con.on("error", function (err) {
+//   console.log(`Mongoose connection error: ${err}`);
+// })
 
-db_con.on('disconnected', function () {
-  console.log('Mongoose disconnected');
-});
+// db_con.on('disconnected', function () {
+//   console.log('Mongoose disconnected');
+// });
 
-process.on('SIGINT', function () {
-  db_con.close(function () {
-      console.log('Mongoose disconnected through app termination');
-  });
-  process.exit(0);
-});
+// process.on('SIGINT', function () {
+//   db_con.close(function () {
+//       console.log('Mongoose disconnected through app termination');
+//   });
+//   process.exit(0);
+// });
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
