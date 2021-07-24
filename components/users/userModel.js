@@ -20,14 +20,14 @@ const basicRegSchema = mongoose.Schema({
   },
   user_role: {
     type: String,
-    enum: ["user","campaign responder", "campaign creator"],
+    enum: ["user","Responder", "Creator"],
     default: "user"
   },
   emailVerified: {
     type: Boolean,
     default: false
   },
-  campaigns: {type: mongoose.Schema.Types.ObjectId, ref: "Campaign"}, //user campaigns should user be a campaigner
+  campaigns: {type: mongoose.Schema.Types.ObjectId, ref: "Campaign"}, //user campaigns be it as a creator or responder
   responder: {
     type: mongoose.Schema.Types.ObjectId, ref: "Responder"
   },
