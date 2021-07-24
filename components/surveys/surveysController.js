@@ -78,23 +78,23 @@ export const storeResponse = asyncHandler(async (req, res) => {
   if (tokenResult.err) {
     return res.status(400).json({ status: "Failed, You need to be logged in" });
   }
-  //is there a user with the tokenResult as their id?
-  // const responder = await NewReg.find({ _id: tokenResult }, (err, user) => {
-  //   if (err) {
-  //     return res.status(400).json({ status: "failed", message: err.message });
-  //   }
-  // });
+
+  //Has the user registered s a responder?
   const responder = await Responder.findOne({user: tokenResult}, (err, responder) => {
     if(err) {
       return res.status(400).json({status: "failed", message: err.message})
     }
   })
-  const survey = await Survey.findOne({responder: responder._id})
-  if(survey) {
+
+  //check if this Responder has taken this survey already?
+  const surveyResponder = await Survey.findOne({responders: tokenResult})
+  // console.log(surveyResponder)
+  if(surveyResponder) {
     return res.status(200).json({status: "success", message: "You have taken this survey already"})
   }
 
-  const newResponse = await Survey.create({responses: [response]})
+  //store the response in the list of responses and save
+  const newResponse = await Survey.create({responses: [response], responders: [tokenResult]})
   await newResponse.save()
   if(newResponse) {
     res.status(200).json({status: "success", message: "You survey response has been recorded"})
@@ -102,22 +102,6 @@ export const storeResponse = asyncHandler(async (req, res) => {
     res.status(400).json({status: "failed", message: err.message})
   }
 
-  // if (responder[0].user_role === "Responder") {
-  //   //checking if this user hasn't already taken this survey
-  //   console.log("This survey id: ", this.Survey._id);
-  //   if (!responder.surveys._id === this.Survey._id) {
-  //     const newResponse = new Survey(req.body);
-  //     Survey.responses.concat(newResponse).save();
-  //   } else {
-  //     res
-  //       .status(400)
-  //       .json({ status: "failed", message: "You already took this survey" });
-  //   }
-  // } else {
-  //   return res.status(400).json({
-  //     status: "Failed, You have to be registered as campaign responder",
-  //   });
-  // }
 });
 
 export default createSurvey;
