@@ -39,7 +39,7 @@ export const storeResponse = async () => {
     });
   } else {
     return res.status(400).json({
-      status: "Failed, You are have to be registered as campaign responder",
+      status: "Failed, You have to be registered as campaign responder",
     });
   }
 };
