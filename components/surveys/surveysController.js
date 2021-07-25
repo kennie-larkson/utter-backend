@@ -80,7 +80,7 @@ export const storeResponse = asyncHandler(async (req, res) => {
     return res.status(400).json({ status: "Failed, You need to be logged in" });
   }
 
-  //Has the user registered s a responder?
+  //Has the user registered as a responder?
   const responder = await Responder.findOne(
     { user: tokenResult },
     (err, responder) => {
