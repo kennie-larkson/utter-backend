@@ -13,6 +13,7 @@ import surveyRoute from "./components/surveys/surveysRoute.js";
 import surveyResponseRoute from "./components/surveys/surveyResRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
+import PaymentRouter from "./components/payment/Route";
 
 dotenv.config();
 connect();
@@ -108,6 +109,7 @@ app.use("/api/v1/responders", responderRoute);
 app.use("/api/v1/campaigners", campaignerRoute);
 app.use("/api/v1/surveys", surveyRoute);
 app.use("/api/v1/surveyresponse", surveyResponseRoute);
+app.use("/api/v1/payment", PaymentRouter);
 app.use(errorHandler);
 app.all("*", (req, res, next) => {
   res.status(404).json({
