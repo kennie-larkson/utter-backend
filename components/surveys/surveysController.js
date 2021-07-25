@@ -2,7 +2,7 @@ import Survey from "./surveysModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 import { verifyToken } from "../../utils/JWT_HANDLER.js";
 import NewReg from "./../users/userModel.js";
-import Responder from "./../respondents/respondersModel.js"
+import Responder from "./../respondents/respondersModel.js";
 
 const createSurvey = asyncHandler(async (req, res) => {
   const { id, title, questions, category } = req.body;
@@ -37,6 +37,7 @@ const createSurvey = asyncHandler(async (req, res) => {
 export const mySurveys = asyncHandler(async (req, res) => {
   const { token } = req.body;
   const tokenResult = verifyToken(token);
+
   if (tokenResult.err) {
     res.status(400).json({ status: "failed", message: tokenResult.err });
     return;
@@ -80,28 +81,39 @@ export const storeResponse = asyncHandler(async (req, res) => {
   }
 
   //Has the user registered as a responder?
-  const responder = await Responder.findOne({user: tokenResult}, (err, responder) => {
-    if(err) {
-      return res.status(400).json({status: "failed", message: err.message})
+  const responder = await Responder.findOne(
+    { user: tokenResult },
+    (err, responder) => {
+      if (err) {
+        return res.status(400).json({ status: "failed", message: err.message });
+      }
     }
-  })
+  );
 
   //check if this Responder has taken this survey already?
-  const surveyResponder = await Survey.findOne({responders: tokenResult})
+  const surveyResponder = await Survey.findOne({ responders: tokenResult });
   // console.log(surveyResponder)
-  if(surveyResponder) {
-    return res.status(403).json({status: "Forbidden", message: "You have taken this survey already"})
+  if (surveyResponder) {
+    return res.status(200).json({
+      status: "success",
+      message: "You have taken this survey already",
+    });
   }
 
-  //store the response in the list of responses, the tokenResult in the list of responders and save
-  const newResponse = await Survey.create({responses: [response], responders: [tokenResult]})
-  await newResponse.save()
-  if(newResponse) {
-    res.status(200).json({status: "success", message: "Your survey response has been recorded"})
-  }else{
-    res.status(400).json({status: "failed", message: err.message})
+  //store the response in the list of responses and save
+  const newResponse = await Survey.create({
+    responses: [response],
+    responders: [tokenResult],
+  });
+  await newResponse.save();
+  if (newResponse) {
+    res.status(200).json({
+      status: "success",
+      message: "You survey response has been recorded",
+    });
+  } else {
+    res.status(400).json({ status: "failed", message: err.message });
   }
-
 });
 
 export default createSurvey;
