@@ -13,7 +13,7 @@ import surveyRoute from "./components/surveys/surveysRoute.js";
 import surveyResponseRoute from "./components/surveys/surveyResRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
-import PaymentRouter from "./components/payment/Route";
+import PaymentRouter from "./components/payment/Route.js";
 
 dotenv.config();
 connect();
@@ -73,6 +73,16 @@ app.get("/logout", (req, res) => {
 //     res.redirect("/");
 //   }
 // });
+
+app.get("/error", (req, res) => {
+  res.send("Payment verify failed");
+  res.end();
+});
+
+app.get("/paystack/callback", (req, res) => {
+  res.send("Welcome back from the paystack payment form");
+  res.end();
+});
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/responders", responderRoute);
