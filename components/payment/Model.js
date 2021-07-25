@@ -9,8 +9,12 @@ const PaymentSchema = mongoose.Schema(
     paidBy: String,
     amount: Number,
     paymentID: String,
+    email: String,
+    fullname: String,
+    reference: String,
   },
   { timestamps: true }
 );
 
-export default Payment = mongoose.model("Payment", PaymentSchema);
+const Payment = mongoose.model("Payment", PaymentSchema);
+export default Payment;
