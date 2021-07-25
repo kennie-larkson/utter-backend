@@ -36,7 +36,10 @@ const basicRegSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "surveyResponse", //user responses should user be a responder
     },
-    wallet: Number,
+    wallet: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
