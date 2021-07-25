@@ -14,7 +14,7 @@ const updateTheUserWallet = async (userid, amount) => {
 };
 
 export const newPayment = async (req, res) => {
-  const [paidBy, amount, paymentID] = req.body;
+  const { paidBy, amount, paymentID } = req.body;
   const userID = verifyToken(paidBy);
   if (userID.err)
     return res.status(400).json({ status: "failed", message: userID.err });
