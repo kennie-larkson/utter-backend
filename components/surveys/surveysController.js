@@ -79,7 +79,7 @@ export const storeResponse = asyncHandler(async (req, res) => {
     return res.status(400).json({ status: "Failed, You need to be logged in" });
   }
 
-  //Has the user registered s a responder?
+  //Has the user registered as a responder?
   const responder = await Responder.findOne({user: tokenResult}, (err, responder) => {
     if(err) {
       return res.status(400).json({status: "failed", message: err.message})
@@ -90,14 +90,14 @@ export const storeResponse = asyncHandler(async (req, res) => {
   const surveyResponder = await Survey.findOne({responders: tokenResult})
   // console.log(surveyResponder)
   if(surveyResponder) {
-    return res.status(200).json({status: "success", message: "You have taken this survey already"})
+    return res.status(403).json({status: "Forbidden", message: "You have taken this survey already"})
   }
 
-  //store the response in the list of responses and save
+  //store the response in the list of responses, the tokenResult in the list of responders and save
   const newResponse = await Survey.create({responses: [response], responders: [tokenResult]})
   await newResponse.save()
   if(newResponse) {
-    res.status(200).json({status: "success", message: "You survey response has been recorded"})
+    res.status(200).json({status: "success", message: "Your survey response has been recorded"})
   }else{
     res.status(400).json({status: "failed", message: err.message})
   }
