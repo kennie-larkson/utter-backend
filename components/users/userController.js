@@ -4,6 +4,7 @@ import NewReg from "./userModel.js";
 import asyncHandler from "./../../middleware/asyncHandler.js";
 import passport from "passport";
 import { createToken, verifyToken } from "./../../utils/JWT_HANDLER.js";
+import isAuth from "../../middleware/IsAuthmiddleware.js";
 
 const saltRounds = 10;
 

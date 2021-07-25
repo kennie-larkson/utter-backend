@@ -1,6 +1,7 @@
 import Payment from "./Model";
 import NewReg from "../users/userModel";
 import { verifyToken } from "../../utils/JWT_HANDLER";
+import isAuth from "../../middleware/IsAuthmiddleware.js";
 
 const updateTheUserWallet = async (userid, amount) => {
   NewReg.updateOne(
@@ -15,9 +16,10 @@ const updateTheUserWallet = async (userid, amount) => {
 
 export const newPayment = async (req, res) => {
   const [paidBy, amount, paymentID] = req.body;
-  const userID = verifyToken(paidBy);
-  if (userID.err)
-    return res.status(400).json({ status: "failed", message: userID.err });
+  // const userID = verifyToken(paidBy);
+  // if (userID.err)
+  //   return res.status(400).json({ status: "failed", message: userID.err });
+  isAuth(paidBy);
   const newPayment = new Payment({ paidBy, amount, paymentID });
   // its async already.
   newPayment.save((err, payment) => {
