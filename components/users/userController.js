@@ -25,7 +25,7 @@ const createUser = asyncHandler(async (req, res, next) => {
           res.status(200).json({
             status: "success",
             message: "User successfully registered",
-            data: newUser._id
+            data: newUser._id,
           });
         });
       }
@@ -42,7 +42,7 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
     email: email,
     password: password,
   });
-  
+
   req.login(newUser, function (err) {
     if (err) {
       console.log(`login error: ${err.message}`);
@@ -53,7 +53,11 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
         const userid = createToken(newUser._id);
         console.log(userid);
         console.log("user logged in and authenticated");
-        res.status(200).json({ message: "user logged in and authenticated" });
+        res.status(200).json({
+          status: "success",
+          message: "user logged in and authenticated",
+          hash: userid,
+        });
       });
     }
   });
