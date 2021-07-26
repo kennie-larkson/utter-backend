@@ -10,8 +10,11 @@ const surveySchema = mongoose.Schema(
       ref: "NewReg",
     },
     category: String,
+    type: String,
+    expectedAmtOfResponses: Number, //If type === targeted
+    emailLog: String, //if the type === "contact"
     responses: Array,
-    status: { type: String, enum: ["active", "inactive"], default: "inactive" },
+    status: { type: String, enum: ["active", "inactive"], default: "active" },
     responders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Responder" }],
   },
   { timestamps: true }
