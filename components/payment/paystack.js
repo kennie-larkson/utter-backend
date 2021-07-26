@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
-import axios from "axios";
-import request from "request"
+import request from "request";
 dotenv.config();
 
 const paystack = () => {
