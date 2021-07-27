@@ -39,7 +39,11 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   //sets the storage.
-  const newUser = new NewReg({
+  // const newUser = new NewReg({
+  //   email: email,
+  //   password: password,
+  // });
+  const newUser = NewReg({
     email: email,
     password: password,
   });
