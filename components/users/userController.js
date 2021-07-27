@@ -39,33 +39,42 @@ const getUserByEmailAndPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   //sets the storage.
+  // ! no! it creates a new instance of a user everytime. userid is always different here....
   // const newUser = new NewReg({
   //   email: email,
   //   password: password,
   // });
-  const newUser = NewReg({
-    email: email,
-    password: password,
-  });
 
-  req.login(newUser, function (err) {
-    if (err) {
-      console.log(`login error: ${err.message}`);
-      res.status(400).json({ message: `login error : ${err.message}` });
-    } else {
-      passport.authenticate("local")(req, res, function () {
-        // use jwt here!
-        const userid = createToken(newUser._id);
-        console.log(userid);
-        console.log("user logged in and authenticated");
-        res.status(200).json({
-          status: "success",
-          message: "user logged in and authenticated",
-          hash: userid,
-        });
+  try {
+    NewReg.findOne({ email }, (err, user) => {
+      if (err) {
+        res
+          .status(400)
+          .json({ status: "failed", message: "Invalid Credentials" });
+        return;
+      }
+
+      req.login(user, function (err) {
+        if (err) {
+          console.log(err);
+          res
+            .status(400)
+            .json({ status: "failed", message: "Invalid Credentials" });
+        } else {
+          passport.authenticate("local")(req, res, function () {
+            const userid = createToken(user._id);
+            res.status(200).json({
+              status: "success",
+              message: "user logged in and authenticated",
+              hash: userid,
+            });
+          });
+        }
       });
-    }
-  });
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {

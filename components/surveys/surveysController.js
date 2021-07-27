@@ -5,7 +5,15 @@ import NewReg from "./../users/userModel.js";
 import Responder from "./../respondents/respondersModel.js";
 
 const createSurvey = asyncHandler(async (req, res) => {
-  const { id, title, questions, category } = req.body;
+  const {
+    id,
+    title,
+    questions,
+    category,
+    type,
+    expectedAmtOfResponses,
+    emailLog,
+  } = req.body;
   // verifytoken first.
   const tokenResult = verifyToken(id);
 
@@ -17,6 +25,9 @@ const createSurvey = asyncHandler(async (req, res) => {
       questions,
       createdBy: tokenResult,
       category,
+      type,
+      expectedAmtOfResponses,
+      emailLog,
     });
 
     survey.save(function (err, newsurvey) {
