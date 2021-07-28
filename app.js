@@ -15,6 +15,7 @@ import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
 import PaymentRouter from "./components/payment/Route.js";
 
+
 dotenv.config();
 connect();
 const app = express();
@@ -83,6 +84,21 @@ app.get("/paystack/callback", (req, res) => {
   res.send("Welcome back from the paystack payment form");
   res.end();
 });
+
+app.get("/oauth/redirecturi", (req, res) => {
+  console.log(req.body)
+  res.send("Done")
+})
+
+// app.post("/sendmail", (req, res) => {
+//   sendEmail({
+//     subject: "Test",
+//     text: "I am sending an email from nodemailer!",
+//     to: "materialkenny@gmail.com",
+//     from: process.env.EMAIL
+//   });
+  
+// })
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/responders", responderRoute);
