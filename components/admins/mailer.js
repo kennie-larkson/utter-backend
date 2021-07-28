@@ -1,29 +1,27 @@
-import nodemailer from "nodemailer"
+import dotenv from "dotenv";
+import mailchimp from "@mailchimp/mailchimp_marketing";
 
+dotenv.config();
 
-  async function main () {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'materiakenny@gmail.com',
-        pass: 'THISGMAILPWORD'
-      }
+const listId = process.env.MAILCHIMP_LIST_ID;
+mailchimp.setConfig({
+  apiKey: process.env.MAILCHIMP_API_KEY,
+  server: process.env.MAILCHIMP_SERVER,
+});
+//Uploading the data to the server
+async function mailchimpSubscription(newuser) {
+  try {
+    const response = await mailchimp.lists.addListMember(listId, {
+      email_address: newuser.email,
+      status: "subscribed",
     });
-    
-    const mailOptions = {
-      from: 'materialkenny@gmail.com',
-      to: 'webappdev993@gmail.com',
-      subject: 'Sending Email using Node.js',
-      text: 'That was easy :)!'
-    };
-    
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
+    console.log(
+      `Successfully added contact as an audience member. The contact's id is ${response.id}.`
+    );
+    return response;
+  } catch (e) {
+    console.log(`Error adding subscriber: ${e.message}`);
   }
+}
 
-  export default main
+export default mailchimpSubscription;

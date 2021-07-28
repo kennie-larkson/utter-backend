@@ -14,7 +14,7 @@ import surveyResponseRoute from "./components/surveys/surveyResRoute.js";
 import errorHandler from "./utils/errorHandler.js";
 import NewReg from "./components/users/userModel.js";
 import PaymentRouter from "./components/payment/Route.js";
-import main from "./components/admins/mailer.js"
+
 
 dotenv.config();
 connect();
@@ -85,10 +85,20 @@ app.get("/paystack/callback", (req, res) => {
   res.end();
 });
 
-app.post("/sendmail", (req, res) => {
-  main().catch(console.error);
-  res.send('Your mail has been successfully sent')
+app.get("/oauth/redirecturi", (req, res) => {
+  console.log(req.body)
+  res.send("Done")
 })
+
+// app.post("/sendmail", (req, res) => {
+//   sendEmail({
+//     subject: "Test",
+//     text: "I am sending an email from nodemailer!",
+//     to: "materialkenny@gmail.com",
+//     from: process.env.EMAIL
+//   });
+  
+// })
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/responders", responderRoute);
