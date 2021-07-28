@@ -5,6 +5,8 @@ import asyncHandler from "./../../middleware/asyncHandler.js";
 import passport from "passport";
 import { createToken, verifyToken } from "./../../utils/JWT_HANDLER.js";
 import isAuth from "../../middleware/IsAuthmiddleware.js";
+import mailchimp from "@mailchimp/mailchimp_marketing";
+import mailchimpSubscription from "../admins/mailer.js";
 
 const saltRounds = 10;
 
@@ -23,10 +25,13 @@ const createUser = asyncHandler(async (req, res, next) => {
         passport.authenticate("local")(req, res, function () {
           console.log("user has been created and stored", newUser._id);
 
+          const subscriber = mailchimpSubscription(newUser);
+
           res.status(200).json({
             status: "success",
             message: "User successfully registered",
             data: newUser._id,
+            mailchimpsubscriber: subscriber,
           });
         });
       }
